@@ -12,8 +12,11 @@ def main():
     df = pd.read_csv("./data/prog_languages_data.csv")
     #st.dataframe(df)
 
-    figure = px.pie(df, values="Sum", names="lang", title="Pie chart of Languages")
-    st.plotly_chart(figure)
+    figure_pie = px.pie(df, values="Sum", names="lang", title="Pie chart of Languages")
+    st.plotly_chart(figure_pie)
+
+    figure_bar = px.bar(df, x="lang", y="Sum", title="Bar Chart of Languages")
+    st.plotly_chart(figure_bar)
 
 if __name__ == "__main__":
     main()
