@@ -1,6 +1,8 @@
+import docx2txt
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import pdfplumber
 
 
 def handle_file_upload(file_label, file_types):
@@ -44,6 +46,16 @@ def main():
             if document.type == "text/plain":
                 #Read as byte
                 st.text(str(document.read(), encoding="utf-8"))
+
+            elif document.type == "application/pdf":
+                try:
+                    with pdfplumber.open(document) as pdf:
+                        pages = pdf.pages[0]
+                        st.write(pages.extract_text())
+                except:
+                    st.write("Could not extract text.")
+            else:
+                st.write(docx2txt.process(document))
 
 
     else:
