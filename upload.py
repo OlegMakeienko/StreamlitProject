@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 import pdfplumber
+import os
 
 
 def handle_file_upload(file_label, file_types):
@@ -20,6 +21,12 @@ def handle_file_upload(file_label, file_types):
 def load_image(image_file):
         return Image.open(image_file)
 
+#fxn to save uploaded file to dir
+def save_uploaded_file(uploaded_file):
+    with open(os.path.join("tempDir", uploaded_file.name), "wb") as file:
+        file.write(uploaded_file.getbuffer())
+    return st.success("Saved file: {}".format(uploaded_file.name))
+
 def main():
     st.title("File Upload Tutorial")
 
@@ -32,12 +39,22 @@ def main():
         if st.button("Show image"):
             st.image(load_image(image_file), width=500)
 
+            #Saving img
+            with open(os.path.join("tempDir", image_file.name), "wb") as f:
+                f.write(image_file.getbuffer())
+
+            st.success("Image Saved")
+
     elif choice == "Dataset":
         st.subheader("Dataset")
         data = handle_file_upload("csv", ["csv"])
         if st.button("Show table"):
             df = pd.read_csv(data)
             st.dataframe(df)
+
+        if st.button("Save table"):
+            save_uploaded_file(data)
+
 
     elif choice == "Document File":
         st.subheader("Document File")
@@ -57,6 +74,8 @@ def main():
             else:
                 st.write(docx2txt.process(document))
 
+        if st.button("Save document"):
+            save_uploaded_file(document)
 
     else:
         st.subheader("About")
